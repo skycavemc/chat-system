@@ -1,0 +1,14 @@
+name: ChatSystem
+version: '${version}'
+main: de.leonheuer.skycave.chatsystem.ChatSystem
+api-version: 1.18
+authors: [ Hakuyamu ]
+
+permissions:
+  skycave.chat.staff:
+    description: "staff permission"
+  skycave.chat.bypass:
+    children:
+      - characters
+      - spam
+      - swear
