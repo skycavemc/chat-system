@@ -8,9 +8,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.checkerframework.checker.regex.qual.Regex;
 
 public class ChatListener implements Listener {
 
@@ -28,7 +26,7 @@ public class ChatListener implements Listener {
             "Spast",
             "Arsch",
             "Titte",
-            "Nutter",
+            "Nutte",
             "Schwanz",
             "suck my dick",
             "fuck",
@@ -67,6 +65,7 @@ public class ChatListener implements Listener {
     public void onChat(AsyncChatEvent event) {
         Player sender = event.getPlayer();
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
+        System.out.println(message);
 
         if (sender.hasPermission("skycave.chat.bypass.*")) {
             return;

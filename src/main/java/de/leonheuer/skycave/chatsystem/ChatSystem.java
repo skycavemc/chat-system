@@ -1,5 +1,7 @@
 package de.leonheuer.skycave.chatsystem;
 
+import de.leonheuer.skycave.chatsystem.listener.ChatListener;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ChatSystem extends JavaPlugin {
@@ -8,7 +10,8 @@ public final class ChatSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new ChatListener(), this);
     }
 
     @Override
