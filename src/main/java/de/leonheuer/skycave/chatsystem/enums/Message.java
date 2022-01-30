@@ -10,6 +10,8 @@ public enum Message {
     SWEAR_WORDS("&cBitte achte auf deine Ausdrucksweise!"),
     IP_ADDRESS("&cDie Nachricht enthält eine IP-Adresse."),
     DOMAIN("&cDie Nachricht enthält eine Domain."),
+    NO_CHAT_UNTIL_MOVED("&7Du kannst erst chatten sobald du dich bewegst."),
+    WAIT_SECOND("&cBitte warte eine Sekunde, bevor du eine Nachricht sendest."),
 
     // staff messages
     STAFF_NOTIFY("&4CHAT: &c%player &7hat gesendet: &c%violation&7. &eOriginal-Nachricht: &7%original"),

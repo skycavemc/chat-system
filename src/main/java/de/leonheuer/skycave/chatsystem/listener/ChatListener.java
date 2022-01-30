@@ -1,73 +1,50 @@
 package de.leonheuer.skycave.chatsystem.listener;
 
+import de.leonheuer.skycave.chatsystem.ChatSystem;
+import de.leonheuer.skycave.chatsystem.enums.Message;
 import de.leonheuer.skycave.chatsystem.enums.Violation;
 import de.leonheuer.skycave.chatsystem.utils.NotificationUtils;
 import de.leonheuer.skycave.chatsystem.utils.RegexUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Locale;
+
 public class ChatListener implements Listener {
 
-    // list of all swear words to be filtered out
-    private final String[] swearWords = new String[]{
-            "Heil Hitler",
-            "Hure",
-            "Huso",
-            "Bastard",
-            "Fotze",
-            "fick",
-            "Schlampe",
-            "Wichser",
-            "Schwuchtel",
-            "Spast",
-            "Arsch",
-            "Titte",
-            "Nutte",
-            "Schwanz",
-            "suck my dick",
-            "fuck",
-            "horny",
-            "slut",
-            "slag",
-            "boob",
-            "pussy",
-            "vagina",
-            "faggot",
-            "penis",
-            "bugger",
-            "cunt",
-            "nigger",
-            "nigga",
-            "jerk",
-            "anal",
-            "wanker",
-            "tosser",
-            "cock",
-            "whore",
-            "bitch",
-            "asshole",
-            "twat",
-            "sperm",
-            "spunk",
-            "testicle",
-            "milf",
-            "gilf",
-            "retard",
-            "anus",
-            "prick",
-    };
+    private final ChatSystem main;
+
+    public ChatListener(ChatSystem main) {
+        this.main = main;
+    }
 
     @EventHandler
     public void onChat(AsyncChatEvent event) {
         Player sender = event.getPlayer();
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
-        System.out.println(message);
+        int words = message.split("\\s").length;
 
         if (sender.hasPermission("skycave.chat.bypass.*")) {
+            return;
+        }
+
+        // block chat until moved
+        if (main.notMoved.contains(sender)) {
+            event.setCancelled(true);
+            sender.sendMessage(Message.NO_CHAT_UNTIL_MOVED.getMessage().get());
+            return;
+        }
+
+        // block chat until 1 sec has passed
+        if (main.secondAfterLogin.contains(sender)) {
+            event.setCancelled(true);
+            sender.sendMessage(Message.WAIT_SECOND.getMessage().get());
             return;
         }
 
@@ -126,8 +103,9 @@ public class ChatListener implements Listener {
         }
 
         // check for swear words
-        if (!sender.hasPermission("skycave.chat.bypass.swear")) {
-            for (String word : swearWords) {
+        YamlConfiguration wordFilter = main.getWordFilterConfig();
+        if (wordFilter != null && !sender.hasPermission("skycave.chat.bypass.swear")) {
+            for (String word : wordFilter.getStringList("block_words")) {
                 if (StringUtils.containsIgnoreCase(message, word)) {
                     NotificationUtils.handleViolation(sender, Violation.SWEAR_WORDS, message);
                     event.setCancelled(true);
@@ -159,8 +137,26 @@ public class ChatListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-
         }
+
+        // grammar
+        if (!sender.hasPermission("skycave.chat.bypass.grammar")) {
+            message = StringUtils.capitalize(message);
+            // 2nd letter lowercase if third is not uppercase
+            if (!StringUtils.isAllUpperCase(message.substring(2, 3))) {
+                message = message.charAt(0) + message.substring(1, 2).toLowerCase(Locale.GERMAN) + message.substring(2);
+            }
+            // dot at the end
+            if (words >= 3 && message.length() >= 10 &&
+                    !message.endsWith(".") &&
+                    !message.endsWith("!") &&
+                    !message.endsWith("?")
+            ) {
+                message = message + ".";
+            }
+        }
+
+        event.message(Component.text(message));
     }
 
 }
