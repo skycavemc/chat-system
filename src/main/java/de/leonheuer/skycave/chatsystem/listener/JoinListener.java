@@ -23,7 +23,7 @@ public class JoinListener implements Listener {
         }
         if (!player.hasPermission("skycave.chat.bypass.wait")) {
             main.secondAfterLogin.add(player);
-            Bukkit.getScheduler().runTaskLater(main, () -> main.secondAfterLogin.remove(player), 20);
+            Bukkit.getScheduler().runTaskLater(main, () -> main.secondAfterLogin.remove(player), 40);
         }
     }
 

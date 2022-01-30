@@ -5,14 +5,13 @@ import de.leonheuer.skycave.chatsystem.enums.Message;
 import de.leonheuer.skycave.chatsystem.enums.Violation;
 import de.leonheuer.skycave.chatsystem.utils.NotificationUtils;
 import de.leonheuer.skycave.chatsystem.utils.RegexUtils;
-import io.papermc.paper.event.player.AsyncChatEvent;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.Locale;
 
@@ -24,13 +23,22 @@ public class ChatListener implements Listener {
         this.main = main;
     }
 
-    @EventHandler
-    public void onChat(AsyncChatEvent event) {
+    @SuppressWarnings("deprecation")
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onChat(AsyncPlayerChatEvent event) {
         Player sender = event.getPlayer();
-        String message = PlainTextComponentSerializer.plainText().serialize(event.message());
+        //String message = PlainTextComponentSerializer.plainText().serialize(event.message());
+        String message = event.getMessage();
         int words = message.split("\\s").length;
 
         if (sender.hasPermission("skycave.chat.bypass.*")) {
+            return;
+        }
+
+        // block chat until cooldown has passed
+        if (main.secondAfterLogin.contains(sender)) {
+            event.setCancelled(true);
+            sender.sendMessage(Message.WAIT_SECOND.getMessage().get());
             return;
         }
 
@@ -38,13 +46,6 @@ public class ChatListener implements Listener {
         if (main.notMoved.contains(sender)) {
             event.setCancelled(true);
             sender.sendMessage(Message.NO_CHAT_UNTIL_MOVED.getMessage().get());
-            return;
-        }
-
-        // block chat until 1 sec has passed
-        if (main.secondAfterLogin.contains(sender)) {
-            event.setCancelled(true);
-            sender.sendMessage(Message.WAIT_SECOND.getMessage().get());
             return;
         }
 
@@ -143,7 +144,7 @@ public class ChatListener implements Listener {
         if (!sender.hasPermission("skycave.chat.bypass.grammar")) {
             message = StringUtils.capitalize(message);
             // 2nd letter lowercase if third is not uppercase
-            if (!StringUtils.isAllUpperCase(message.substring(2, 3))) {
+            if (message.length() >= 3 && !StringUtils.isAllUpperCase(message.substring(2, 3))) {
                 message = message.charAt(0) + message.substring(1, 2).toLowerCase(Locale.GERMAN) + message.substring(2);
             }
             // dot at the end
@@ -156,7 +157,8 @@ public class ChatListener implements Listener {
             }
         }
 
-        event.message(Component.text(message));
+        //event.message(Component.text(message));
+        event.setMessage(message);
     }
 
 }
