@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'de.leonheuer.skycave'
-version = '1.1.2-SNAPSHOT'
+version = '1.1.3-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -35,6 +35,7 @@ java {
 
 tasks.withType(JavaCompile).configureEach {
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        //noinspection GroovyAssignabilityCheck, GroovyAccessibility
         options.release = targetJavaVersion
     }
     compileJava.options.encoding = encoding

@@ -19,6 +19,9 @@ public enum Message {
     CHAT_SYSTEM_RELOAD_SUCCESS("&aDie Konfiguration wurde neugeladen."),
     CHAT_SYSTEM_RELOAD_ERROR("&cBeim Neuladen trat ein Fehler auf. Siehe Konsole für weitere Informationen."),
 
+    // chat clear command
+    CHAT_CLEAR_BROADCAST("&cDer Chat wurde von &4%player &cgeleert!"),
+
     // staff messages
     STAFF_NOTIFY("&4CHAT: &c%player &7hat gesendet: &c%violation&7. &eOriginal-Nachricht: &7%original"),
     ;
