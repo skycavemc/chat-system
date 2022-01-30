@@ -7,6 +7,9 @@ authors: [ Hakuyamu ]
 commands:
   chatsystem:
     permission: skycave.chat.command.chatsystem
+  clearchat:
+    permission: skycave.chat.command.clearchat
+    aliases: [ cc ]
 
 permissions:
   skycave.chat.staff:

@@ -41,6 +41,7 @@ public final class ChatSystem extends JavaPlugin {
         pm.registerEvents(new MoveListener(this), this);
 
         registerCommand("chatsystem", new ChatSystemCommand(this));
+        registerCommand("clearchat", new ChatSystemCommand(this));
     }
 
     /**
