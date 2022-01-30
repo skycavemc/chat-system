@@ -35,9 +35,21 @@ public final class ChatSystem extends JavaPlugin {
         pm.registerEvents(new JoinListener(this), this);
         pm.registerEvents(new MoveListener(this), this);
 
-        if (FileUtils.copyResource(this, "word_filter.yml")) {
+        reloadResources();
+    }
+
+    /**
+     * Reloads all configurations of the plugin.
+     * Copies resources of the plugin in the data folder if they are missing.
+     * @return Whether reloading succeeded.
+     */
+    public boolean reloadResources() {
+        boolean succeeded;
+        succeeded = FileUtils.copyResource(this, "word_filter.yml");
+        if (succeeded) {
             wordFilterConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "word_filter.yml"));
         }
+        return succeeded;
     }
 
     @Nullable

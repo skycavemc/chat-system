@@ -10,6 +10,12 @@ import java.net.URL;
 
 public class FileUtils {
 
+    /**
+     * Copies the resource of the Bukkit plugin into the data folder of the Bukkit plugin.
+     * @param main The main class of the Bukkit plugin
+     * @param resourceName The file name of the resource
+     * @return Whether the operation succeeded. Will also return true if the file already exists in the data folder.
+     */
     @SuppressWarnings("UnstableApiUsage")
     public static boolean copyResource(JavaPlugin main, String resourceName) {
         File destination = new File(main.getDataFolder(), resourceName);
