@@ -83,7 +83,7 @@ public class FileLogger {
         output = format.replaceFirst("%output", output);
         output = output.replaceFirst("%timestamp", formatter.format(LocalDateTime.now()));
         try {
-            FileWriter writer = new FileWriter(logFile);
+            FileWriter writer = new FileWriter(logFile, true);
             writer.write(output);
             writer.close();
         } catch (IOException e) {
@@ -101,8 +101,8 @@ public class FileLogger {
         output = format.replaceFirst("%output", output);
         output = output.replaceFirst("%timestamp", formatter.format(LocalDateTime.now()));
         try {
-            FileWriter writer = new FileWriter(logFile);
-            writer.write(output + "\n");
+            FileWriter writer = new FileWriter(logFile, true);
+            writer.write(output + System.getProperty("line.separator"));
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
