@@ -50,6 +50,10 @@ public final class ChatSystem extends JavaPlugin {
      */
     public boolean reloadResources() {
         boolean succeeded;
+        if (!getDataFolder().exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            getDataFolder().mkdirs();
+        }
         succeeded = FileUtils.copyResource(this, "word_filter.yml");
         if (succeeded) {
             wordFilterConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "word_filter.yml"));
