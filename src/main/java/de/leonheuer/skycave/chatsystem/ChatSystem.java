@@ -2,10 +2,13 @@ package de.leonheuer.skycave.chatsystem;
 
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import de.leonheuer.skycave.chatsystem.commands.ChatSystemCommand;
 import de.leonheuer.skycave.chatsystem.listener.ChatListener;
 import de.leonheuer.skycave.chatsystem.listener.JoinListener;
 import de.leonheuer.skycave.chatsystem.listener.MoveListener;
 import de.leonheuer.skycave.chatsystem.utils.FileUtils;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -30,12 +33,14 @@ public final class ChatSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        reloadResources();
+
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new ChatListener(this), this);
         pm.registerEvents(new JoinListener(this), this);
         pm.registerEvents(new MoveListener(this), this);
 
-        reloadResources();
+        registerCommand("chatsystem", new ChatSystemCommand(this));
     }
 
     /**
@@ -50,6 +55,15 @@ public final class ChatSystem extends JavaPlugin {
             wordFilterConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "word_filter.yml"));
         }
         return succeeded;
+    }
+
+    private void registerCommand(String command, CommandExecutor executor) {
+        PluginCommand cmd = this.getCommand(command);
+        if (cmd == null) {
+            getLogger().severe("The command /" + command + " has no entry in the plugin.yml.");
+            return;
+        }
+        cmd.setExecutor(executor);
     }
 
     @Nullable

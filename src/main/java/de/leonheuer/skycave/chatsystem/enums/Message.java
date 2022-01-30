@@ -13,6 +13,12 @@ public enum Message {
     NO_CHAT_UNTIL_MOVED("&7Du kannst erst chatten sobald du dich bewegst."),
     WAIT_SECOND("&cBitte warte eine Sekunde, bevor du eine Nachricht sendest."),
 
+    // chatsystem command
+    CHAT_SYSTEM_HELP_HEADER("&8~~~~ &2Befehlshilfe für das ChatSystem &8~~~~"),
+    CHAT_SYSTEM_RELOAD_HELP("&e/chatsystem reload &8- &7&oLädt die Konfiguration neu"),
+    CHAT_SYSTEM_RELOAD_SUCCESS("&aDie Konfiguration wurde neugeladen."),
+    CHAT_SYSTEM_RELOAD_ERROR("&cBeim Neuladen trat ein Fehler auf. Siehe Konsole für weitere Informationen."),
+
     // staff messages
     STAFF_NOTIFY("&4CHAT: &c%player &7hat gesendet: &c%violation&7. &eOriginal-Nachricht: &7%original"),
     ;
