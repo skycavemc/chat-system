@@ -32,6 +32,8 @@ public class FileUtils {
         }
 
         try {
+            //noinspection ResultOfMethodCallIgnored
+            destination.createNewFile();
             Resources.asByteSource(resource).copyTo(Files.asByteSink(destination));
             main.getLogger().info("The file " + resourceName + " has been created.");
             return true;
