@@ -5,6 +5,7 @@ import de.leonheuer.skycave.chatsystem.enums.Message;
 import de.leonheuer.skycave.chatsystem.enums.Violation;
 import de.leonheuer.skycave.chatsystem.utils.NotificationUtils;
 import de.leonheuer.skycave.chatsystem.utils.RegexUtils;
+import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -27,9 +28,9 @@ public class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
         Player sender = event.getPlayer();
-        //String message = PlainTextComponentSerializer.plainText().serialize(event.message());
         String message = event.getMessage();
         int words = message.split("\\s").length;
+        YamlConfiguration config = main.getConfiguration();
 
         if (sender.hasPermission("skycave.chat.bypass.*")) {
             return;
@@ -37,16 +38,29 @@ public class ChatListener implements Listener {
 
         // block chat until cooldown has passed
         if (main.secondAfterLogin.contains(sender)) {
-            event.setCancelled(true);
             sender.sendMessage(Message.WAIT_SECOND.getMessage().get());
+            event.setCancelled(true);
             return;
         }
 
         // block chat until moved
         if (main.notMoved.contains(sender)) {
-            event.setCancelled(true);
             sender.sendMessage(Message.NO_CHAT_UNTIL_MOVED.getMessage().get());
+            event.setCancelled(true);
             return;
+        }
+
+        // block similar messages
+        if (config != null && !sender.hasPermission("skycave.chat.bypass.similar") &&
+                main.lastMessage.containsKey(sender)
+        ) {
+            NormalizedLevenshtein levenshtein = new NormalizedLevenshtein();
+            double percentage =  config.getInt("similarity_percentage") / 100.0;
+            if (levenshtein.similarity(message, main.lastMessage.get(sender)) >= percentage) {
+                NotificationUtils.handleViolation(sender, Violation.SIMILAR, message);
+                event.setCancelled(true);
+                return;
+            }
         }
 
         boolean bpChars = sender.hasPermission("skycave.chat.bypass.characters");
@@ -104,9 +118,8 @@ public class ChatListener implements Listener {
         }
 
         // check for swear words
-        YamlConfiguration wordFilter = main.getWordFilterConfig();
-        if (wordFilter != null && !sender.hasPermission("skycave.chat.bypass.swear")) {
-            for (String word : wordFilter.getStringList("block_words")) {
+        if (config != null && !sender.hasPermission("skycave.chat.bypass.swear")) {
+            for (String word : config.getStringList("block_words")) {
                 if (StringUtils.containsIgnoreCase(message, word)) {
                     NotificationUtils.handleViolation(sender, Violation.SWEAR_WORDS, message);
                     event.setCancelled(true);
@@ -157,8 +170,10 @@ public class ChatListener implements Listener {
             }
         }
 
-        //event.message(Component.text(message));
         event.setMessage(message);
+        if (!event.isCancelled()) {
+            main.lastMessage.put(sender, message);
+        }
     }
 
 }

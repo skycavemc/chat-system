@@ -7,6 +7,7 @@ public enum Violation {
     SWEAR_WORDS(Message.SWEAR_WORDS, "Schimpfwörter"),
     IP_ADDRESS(Message.IP_ADDRESS, "IP-Adresse"),
     DOMAIN(Message.DOMAIN, "Domain"),
+    SIMILAR(Message.SIMILAR, "Ähnliche Nachricht"),
     ;
 
     private final Message message;

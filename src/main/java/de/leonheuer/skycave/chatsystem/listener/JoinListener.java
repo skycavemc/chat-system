@@ -25,6 +25,7 @@ public class JoinListener implements Listener {
             main.secondAfterLogin.add(player);
             Bukkit.getScheduler().runTaskLater(main, () -> main.secondAfterLogin.remove(player), 40);
         }
+        main.lastMessage.remove(player);
     }
 
 }

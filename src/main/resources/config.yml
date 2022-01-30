@@ -1,3 +1,4 @@
+# The words to handle as swear words
 block_words:
   - Heil Hitler
   - Hure
@@ -44,3 +45,5 @@ block_words:
   - retard
   - anus
   - prick
+# The similarity to the last message, in percent, at which a message is blocked
+similarity_percentage: 70

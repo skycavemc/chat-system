@@ -12,6 +12,7 @@ public enum Message {
     DOMAIN("&cDie Nachricht enthält eine Domain."),
     NO_CHAT_UNTIL_MOVED("&7Du kannst erst chatten sobald du dich bewegst."),
     WAIT_SECOND("&cBitte warte eine Sekunde, bevor du eine Nachricht sendest."),
+    SIMILAR("&cDeine Nachricht ähnelt deiner vorherigen."),
 
     // chatsystem command
     CHAT_SYSTEM_HELP_HEADER("&8~~~~ &2Befehlshilfe für das ChatSystem &8~~~~"),
