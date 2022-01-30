@@ -1,11 +1,14 @@
 package de.leonheuer.skycave.chatsystem.models;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 /**
  * Simple logger class that allows to log strings to a file.
@@ -76,8 +79,9 @@ public class FileLogger {
      * @param output The output string to log
      */
     public void log(@NotNull String output) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
         output = format.replaceFirst("%output", output);
-        output = output.replaceFirst("%timestamp", LocalDateTime.now().toString());
+        output = output.replaceFirst("%timestamp", formatter.format(LocalDateTime.now()));
         try {
             FileWriter writer = new FileWriter(logFile);
             writer.write(output);
@@ -93,8 +97,9 @@ public class FileLogger {
      * @param output The output string to log
      */
     public void logln(@NotNull String output) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
         output = format.replaceFirst("%output", output);
-        output = output.replaceFirst("%timestamp", LocalDateTime.now().toString());
+        output = output.replaceFirst("%timestamp", formatter.format(LocalDateTime.now()));
         try {
             FileWriter writer = new FileWriter(logFile);
             writer.write(output + "\n");
