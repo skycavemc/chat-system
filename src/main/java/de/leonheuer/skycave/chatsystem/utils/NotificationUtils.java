@@ -1,12 +1,16 @@
 package de.leonheuer.skycave.chatsystem.utils;
 
+import de.leonheuer.skycave.chatsystem.ChatSystem;
 import de.leonheuer.skycave.chatsystem.enums.Message;
 import de.leonheuer.skycave.chatsystem.enums.Violation;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class NotificationUtils {
+
+    private static final ChatSystem main = JavaPlugin.getPlugin(ChatSystem.class);
 
     /**
      * Warns the player of a violation they committed in their chat message and notifies all staff members.
@@ -26,15 +30,17 @@ public class NotificationUtils {
      * @param original The original chat message
      */
     public static void notifyStaff(@NotNull Player player, @NotNull String violation, @NotNull String original) {
+        String message = Message.STAFF_NOTIFY.getMessage()
+                .replace("%player", player.getName())
+                .replace("%violation", violation)
+                .replace("%original", original)
+                .get(false);
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.hasPermission("skycave.chat.staff")) {
-                p.sendMessage(Message.STAFF_NOTIFY.getMessage()
-                        .replace("%player", player.getName())
-                        .replace("%violation", violation)
-                        .replace("%original", original)
-                        .get(false));
+                p.sendMessage(message);
             }
         }
+        Bukkit.getConsoleSender().sendMessage(message);
     }
 
 }
