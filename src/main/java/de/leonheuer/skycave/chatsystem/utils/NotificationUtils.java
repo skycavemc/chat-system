@@ -41,6 +41,7 @@ public class NotificationUtils {
             }
         }
         Bukkit.getConsoleSender().sendMessage(message);
+        main.getChatLogger().logln(message);
     }
 
 }

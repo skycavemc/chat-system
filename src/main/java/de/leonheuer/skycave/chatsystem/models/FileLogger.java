@@ -5,10 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
+import java.time.LocalDateTime;
 
 /**
  * Simple logger class that allows to log strings to a file.
@@ -16,20 +13,16 @@ import java.util.function.Consumer;
  */
 public class FileLogger {
 
-    private final List<Consumer<String>> actions = new ArrayList<>();
     private String format;
     private File logFile;
 
     /**
      * Creates a new logger instance.
      * @param logFile The file to log to
-     * @param actions The actions to perform after logging
      */
-    @SafeVarargs
-    public FileLogger(@NotNull File logFile, Consumer<String>... actions) {
+    public FileLogger(@NotNull File logFile) {
         this.format = "[%timestamp] %output";
         this.logFile = logFile;
-        this.actions.addAll(Arrays.stream(actions).toList());
     }
 
     /**
@@ -37,13 +30,10 @@ public class FileLogger {
      * Placeholders for the format: %timestamp, %output
      * @param format The logging format
      * @param logFile The file to log to
-     * @param actions The actions to perform after logging
      */
-    @SafeVarargs
-    public FileLogger(@NotNull String format, @NotNull File logFile, Consumer<String>... actions) {
+    public FileLogger(@NotNull String format, @NotNull File logFile) {
         this.format = format;
         this.logFile = logFile;
-        this.actions.addAll(Arrays.stream(actions).toList());
     }
 
     /**
@@ -82,35 +72,16 @@ public class FileLogger {
     }
 
     /**
-     * Adds customized actions to perform after logging.
-     * The actions should be provided as a consumer with 1 parameter.
-     * When logging, the output string will be passed to the consumer.
-     * @param actions The custom actions
-     */
-    @SafeVarargs
-    public final void addActions(Consumer<String>... actions) {
-        this.actions.addAll(Arrays.stream(actions).toList());
-    }
-
-    /**
-     * Clears all the custom actions.
-     */
-    public void clearActions() {
-        actions.clear();
-    }
-
-    /**
      * Logs the given output string to the log file and executes all custom actions.
      * @param output The output string to log
      */
     public void log(@NotNull String output) {
+        output = format.replaceFirst("%output", output);
+        output = output.replaceFirst("%timestamp", LocalDateTime.now().toString());
         try {
             FileWriter writer = new FileWriter(logFile);
             writer.write(output);
             writer.close();
-            for (Consumer<String> c : actions) {
-                c.accept(output);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -122,13 +93,12 @@ public class FileLogger {
      * @param output The output string to log
      */
     public void logln(@NotNull String output) {
+        output = format.replaceFirst("%output", output);
+        output = output.replaceFirst("%timestamp", LocalDateTime.now().toString());
         try {
             FileWriter writer = new FileWriter(logFile);
             writer.write(output + "\n");
             writer.close();
-            for (Consumer<String> c : actions) {
-                c.accept(output);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }

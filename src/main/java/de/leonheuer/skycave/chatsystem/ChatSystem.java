@@ -5,6 +5,7 @@ import de.leonheuer.skycave.chatsystem.commands.ClearChatCommand;
 import de.leonheuer.skycave.chatsystem.listener.ChatListener;
 import de.leonheuer.skycave.chatsystem.listener.JoinListener;
 import de.leonheuer.skycave.chatsystem.listener.MoveListener;
+import de.leonheuer.skycave.chatsystem.models.FileLogger;
 import de.leonheuer.skycave.chatsystem.utils.FileUtils;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -28,6 +29,7 @@ public final class ChatSystem extends JavaPlugin {
     public final HashMap<Player, String> lastMessage = new HashMap<>();
     public final HashMap<Player, Integer> messageCount = new HashMap<>();
     public final HashMap<Player, LocalDateTime> lastTime = new HashMap<>();
+    private FileLogger chatLogger;
     private YamlConfiguration config = null;
 
     @Override
@@ -41,6 +43,8 @@ public final class ChatSystem extends JavaPlugin {
 
         registerCommand("chatsystem", new ChatSystemCommand(this));
         registerCommand("clearchat", new ClearChatCommand());
+
+        chatLogger = new FileLogger(new File(getDataFolder(), "chat.log"));
     }
 
     /**
@@ -73,6 +77,10 @@ public final class ChatSystem extends JavaPlugin {
     @Nullable
     public YamlConfiguration getConfiguration() {
         return config;
+    }
+
+    public FileLogger getChatLogger() {
+        return chatLogger;
     }
 
     @Override

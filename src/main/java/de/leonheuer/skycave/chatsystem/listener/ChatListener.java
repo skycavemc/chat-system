@@ -29,12 +29,14 @@ public class ChatListener implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         Player sender = event.getPlayer();
         String message = event.getMessage();
-        int words = message.split("\\s").length;
-        YamlConfiguration config = main.getConfiguration();
+        main.getChatLogger().logln(sender.getName() + " > " + message);
 
         if (sender.hasPermission("skycave.chat.bypass.*")) {
             return;
         }
+
+        int words = message.split("\\s").length;
+        YamlConfiguration config = main.getConfiguration();
 
         // block chat until cooldown has passed
         if (main.secondAfterLogin.contains(sender)) {
