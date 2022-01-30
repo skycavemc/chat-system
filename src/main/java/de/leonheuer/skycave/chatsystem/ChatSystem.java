@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ public final class ChatSystem extends JavaPlugin {
     public final List<Player> secondAfterLogin = new ArrayList<>();
     public final HashMap<Player, String> lastMessage = new HashMap<>();
     public final HashMap<Player, Integer> messageCount = new HashMap<>();
+    public final HashMap<Player, LocalDateTime> lastTime = new HashMap<>();
     private YamlConfiguration config = null;
 
     @Override
