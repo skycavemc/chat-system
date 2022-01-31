@@ -6,7 +6,7 @@ public enum Message {
 
     // player warnings
     DISALLOWED_CHARS("&cDie Nachricht enthält verbotene Zeichen."),
-    SPAM("&cDie Nachricht enrhält Zeichen-Spam."),
+    SPAM("&cDie Nachricht enthält Zeichen-Spam."),
     SWEAR_WORDS("&cBitte achte auf deine Ausdrucksweise!"),
     IP_ADDRESS("&cDie Nachricht enthält eine IP-Adresse."),
     DOMAIN("&cDie Nachricht enthält eine Domain."),

@@ -35,7 +35,7 @@ public class ChatListener implements Listener {
             return;
         }
 
-        int words = message.split("\\s").length;
+        String[] words = message.split("\\s");
         YamlConfiguration config = main.getConfiguration();
 
         // block chat until cooldown has passed
@@ -155,15 +155,37 @@ public class ChatListener implements Listener {
             }
         }
 
+        // remove caps
+        if (!sender.hasPermission("skycave.chat.bypass.caps")) {
+            for (int i = 0; i < words.length; i++) {
+                if (words[i].length() < 5) {
+                    continue;
+                }
+                double uppercase = 0;
+                for (char c : words[i].toCharArray()) {
+                    if (Character.isUpperCase(c)) {
+                        uppercase++;
+                    }
+                }
+                if (uppercase / words[i].length() > .8) {
+                    words[i] = words[i].toLowerCase(Locale.GERMAN);
+                }
+            }
+            message = String.join(" ", words);
+        }
+
         // grammar
         if (!sender.hasPermission("skycave.chat.bypass.grammar")) {
             message = StringUtils.capitalize(message);
             // 2nd letter lowercase if third is not uppercase
-            if (message.length() >= 3 && !StringUtils.isAllUpperCase(message.substring(2, 3))) {
-                message = message.charAt(0) + message.substring(1, 2).toLowerCase(Locale.GERMAN) + message.substring(2);
+            if (message.length() >= 3 &&
+                    Character.isUpperCase(message.charAt(1)) &&
+                    !Character.isUpperCase(message.charAt(2))
+            ) {
+                message = message.charAt(0) + Character.toLowerCase(message.charAt(1)) + message.substring(2);
             }
             // dot at the end
-            if (words >= 3 && message.length() >= 10 &&
+            if (words.length >= 3 && message.length() >= 10 &&
                     !message.endsWith(".") &&
                     !message.endsWith("!") &&
                     !message.endsWith("?")
