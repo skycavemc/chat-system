@@ -87,9 +87,13 @@ public class ChatListener implements Listener {
             // check for spam
             if (!bpSpam) {
                 // same character
-                if (c == cache) {
-                    count++;
-                    if (count > 4) {
+                if (String.valueOf(c).equalsIgnoreCase(String.valueOf(cache))) {
+                    if (count == 0) {
+                        count = 2;
+                    } else {
+                        count++;
+                    }
+                    if (count > 3) {
                         NotificationUtils.handleViolation(sender, Violation.SPAM, message);
                         event.setCancelled(true);
                         return;
@@ -117,6 +121,7 @@ public class ChatListener implements Listener {
                     }
                 }
             }
+            main.getLogger().info("" + count);
         }
 
         // check for swear words
