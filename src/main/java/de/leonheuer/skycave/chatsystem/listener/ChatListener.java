@@ -121,7 +121,6 @@ public class ChatListener implements Listener {
                     }
                 }
             }
-            main.getLogger().info("" + count);
         }
 
         // check for swear words
