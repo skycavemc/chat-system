@@ -153,7 +153,7 @@ public class ChatListener implements Listener {
         if (!sender.hasPermission("skycave.chat.bypass.domains")) {
             if (
                     RegexUtils.matches(message,
-                            "(?!-)[A-Za-z0-9-]{1,63}(?<!-)\\s?(\\.|,|dot|\\(dot\\)|punkt|\\(punkt\\))\\s?(de|com|net|eu|bz|me|xyz)",
+                            "(\\s+|^)[A-Za-z0-9-]{1,63}\\s*(\\.|,|dot|\\(dot\\)|punkt|\\(punkt\\)|-)\\s*(de|com|net|eu|bz|me|xyz)(\\s+|\\W|$)",
                             "skycave.de", "skybee.me", "youtu.be", "youtube.com", "imgur.com", "twitch.tv", "gamepedia.com")
             ) {
                 NotificationUtils.handleViolation(sender, Violation.DOMAIN, message);
