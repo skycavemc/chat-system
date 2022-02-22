@@ -58,5 +58,34 @@ chat_commands:
   - global
   - l
   - local
+# Messages that start like this will be excluded from similarity checks
+whitelist_similarity:
+  - Hallo
+  - Hey
+  - Hi
+  - Moin
+  - Huhu
+  - Hey
+  - Heyy
+  - Nabend
+  - Guten Morgen
+  - Morgen
+  - Guten Tag
+  - Guten Vormittag
+  - Guten Mittag
+  - Guten Nachmittag
+  - Guten Abend
+  - Nabend
+  - Gute Nacht
+  - Schlaf gut
+  - Bis dann
+  - Bis später
+  - bb
+  - bs
+  - Ciao
+  - Bye
+  - Herzlich
+  - Willkommen
+  - Viel Spaß
 # DO NOT CHANGE THIS
 config_version: null

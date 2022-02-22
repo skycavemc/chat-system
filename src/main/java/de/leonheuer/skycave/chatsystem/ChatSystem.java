@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 public final class ChatSystem extends JavaPlugin {
 
     public static final String PREFIX = "&e&l| &6Chat &8» ";
-    public static final String CONFIG_VERSION = "1.0";
+    public static final String CONFIG_VERSION = "1.1";
     public final List<Player> notMoved = new ArrayList<>();
     public final List<Player> secondAfterLogin = new ArrayList<>();
     public final HashMap<Player, String[]> lastMessage = new HashMap<>();
@@ -82,8 +83,8 @@ public final class ChatSystem extends JavaPlugin {
             }
 
             if (!ver.equals(CONFIG_VERSION)) {
-                Files.move(getDataFolder().toPath().resolveSibling("config.yml"),
-                        getDataFolder().toPath().resolveSibling("config_old.yml"));
+                Files.move(Paths.get(getDataFolder().getPath(), "config.yml"),
+                        Paths.get(getDataFolder().getPath(), "config_old.yml"));
                 if (reloadResources() && config != null) {
                     config.set("config_version", CONFIG_VERSION);
                     getLogger().info("A backup named \"config_old.yml\" has been created.");

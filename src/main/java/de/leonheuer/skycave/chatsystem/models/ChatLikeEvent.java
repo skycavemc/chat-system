@@ -72,7 +72,7 @@ public class ChatLikeEvent {
 
         // block similar messages
         if (config != null && !player.hasPermission("skycave.chat.bypass.similar") &&
-                main.lastMessage.containsKey(player)
+                main.lastMessage.containsKey(player) && !config.getStringList("whitelist_similarity").contains(words[0])
         ) {
             NormalizedLevenshtein levenshtein = new NormalizedLevenshtein();
             double percentage = config.getInt("similarity_percentage") / 100.0;

@@ -22,7 +22,7 @@ public class CommandListener implements Listener {
 
         if (config != null && !e.getPlayer().hasPermission("skycave.chat.bypass.commands")) {
             // remove slash and slit the arguments
-            String[] args = e.getMessage().substring(1).split("\s");
+            String[] args = e.getMessage().substring(1).split("\\s");
             // check if command should be handled as chat
             if (config.getStringList("chat_commands").contains(args[0])) {
                 // message without first argument
