@@ -4,6 +4,7 @@ import de.leonheuer.skycave.chatsystem.ChatSystem;
 import de.leonheuer.skycave.chatsystem.models.ChatLikeEvent;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
@@ -15,7 +16,7 @@ public class CommandListener implements Listener {
         this.main = main;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onCommand(PlayerCommandPreprocessEvent e) {
         YamlConfiguration config = main.getConfiguration();
 
