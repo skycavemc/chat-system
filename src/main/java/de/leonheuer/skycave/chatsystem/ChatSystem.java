@@ -25,7 +25,7 @@ public final class ChatSystem extends JavaPlugin {
     public static final String PREFIX = "&e&l| &6Chat &8» ";
     public final List<Player> notMoved = new ArrayList<>();
     public final List<Player> secondAfterLogin = new ArrayList<>();
-    public final HashMap<Player, String> lastMessage = new HashMap<>();
+    public final HashMap<Player, String[]> lastMessage = new HashMap<>();
     private FileLogger chatLogger;
     private YamlConfiguration config = null;
 

@@ -58,7 +58,9 @@ public class ChatListener implements Listener {
         ) {
             NormalizedLevenshtein levenshtein = new NormalizedLevenshtein();
             double percentage =  config.getInt("similarity_percentage") / 100.0;
-            if (levenshtein.similarity(message, main.lastMessage.get(sender)) >= percentage) {
+            if (levenshtein.similarity(message, main.lastMessage.get(sender)[0]) >= percentage ||
+                    levenshtein.similarity(message, main.lastMessage.get(sender)[1]) >= percentage
+            ) {
                 NotificationUtils.handleViolation(sender, Violation.SIMILAR, message);
                 event.setCancelled(true);
                 return;
@@ -200,7 +202,14 @@ public class ChatListener implements Listener {
 
         event.setMessage(message);
         if (!event.isCancelled()) {
-            main.lastMessage.put(sender, message);
+            String[] lastMessages = main.lastMessage.get(sender);
+            if (lastMessages == null) {
+                lastMessages = new String[]{message, null};
+            } else {
+                lastMessages[1] = lastMessages[0];
+                lastMessages[0] = message;
+            }
+            main.lastMessage.put(sender, lastMessages);
         }
     }
 
