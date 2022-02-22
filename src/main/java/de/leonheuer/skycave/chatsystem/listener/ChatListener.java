@@ -59,7 +59,8 @@ public class ChatListener implements Listener {
             NormalizedLevenshtein levenshtein = new NormalizedLevenshtein();
             double percentage =  config.getInt("similarity_percentage") / 100.0;
             if (levenshtein.similarity(message, main.lastMessage.get(sender)[0]) >= percentage ||
-                    levenshtein.similarity(message, main.lastMessage.get(sender)[1]) >= percentage
+                    main.lastMessage.get(sender)[1] != null &&
+                            levenshtein.similarity(message, main.lastMessage.get(sender)[1]) >= percentage
             ) {
                 NotificationUtils.handleViolation(sender, Violation.SIMILAR, message);
                 event.setCancelled(true);
@@ -183,13 +184,20 @@ public class ChatListener implements Listener {
         // grammar
         if (!sender.hasPermission("skycave.chat.bypass.grammar")) {
             message = StringUtils.capitalize(message);
+
             // 2nd letter lowercase if third is not uppercase
             if (message.length() >= 3 &&
-                    Character.isUpperCase(message.charAt(1)) &&
-                    !Character.isUpperCase(message.charAt(2))
+                    StringUtils.isAllUpperCase(message.substring(0, 2)) &&
+                    Character.isLowerCase(message.charAt(2))
             ) {
-                message = message.charAt(0) + Character.toLowerCase(message.charAt(1)) + message.substring(2);
+                StringBuilder sb = new StringBuilder();
+                message = sb
+                        .append(message.charAt(0))
+                        .append(Character.toLowerCase(message.charAt(1)))
+                        .append(message.substring(2))
+                        .toString();
             }
+
             // dot at the end
             if (words.length >= 3 && message.length() >= 10 &&
                     !message.endsWith(".") &&
