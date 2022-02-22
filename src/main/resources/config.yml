@@ -47,3 +47,16 @@ block_words:
   - prick
 # The similarity to the last message, in percent, at which a message is blocked
 similarity_percentage: 70
+# Commands to handle as chat
+chat_commands:
+  - h
+  - handel
+  - handelchat
+  - handelschat
+  - e
+  - g
+  - global
+  - l
+  - local
+# DO NOT CHANGE THIS
+config_version: null

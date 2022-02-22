@@ -3,6 +3,7 @@ package de.leonheuer.skycave.chatsystem;
 import de.leonheuer.skycave.chatsystem.commands.ChatSystemCommand;
 import de.leonheuer.skycave.chatsystem.commands.ClearChatCommand;
 import de.leonheuer.skycave.chatsystem.listener.ChatListener;
+import de.leonheuer.skycave.chatsystem.listener.CommandListener;
 import de.leonheuer.skycave.chatsystem.listener.JoinListener;
 import de.leonheuer.skycave.chatsystem.listener.MoveListener;
 import de.leonheuer.skycave.chatsystem.models.FileLogger;
@@ -16,6 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.List;
 public final class ChatSystem extends JavaPlugin {
 
     public static final String PREFIX = "&e&l| &6Chat &8» ";
+    public static final String CONFIG_VERSION = "1.0";
     public final List<Player> notMoved = new ArrayList<>();
     public final List<Player> secondAfterLogin = new ArrayList<>();
     public final HashMap<Player, String[]> lastMessage = new HashMap<>();
@@ -31,10 +35,15 @@ public final class ChatSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        reloadResources();
+        try {
+            checkConfigVersion();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new ChatListener(this), this);
+        pm.registerEvents(new CommandListener(this), this);
         pm.registerEvents(new JoinListener(this), this);
         pm.registerEvents(new MoveListener(this), this);
 
@@ -60,6 +69,28 @@ public final class ChatSystem extends JavaPlugin {
             config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
         }
         return succeeded;
+    }
+
+    private void checkConfigVersion() throws IOException {
+        if (reloadResources() && config != null) {
+            String ver = config.getString("config_version");
+
+            if (ver == null) {
+                config.set("config_version", CONFIG_VERSION);
+                config.save(new File(getDataFolder(), "config.yml"));
+                return;
+            }
+
+            if (!ver.equals(CONFIG_VERSION)) {
+                Files.move(getDataFolder().toPath().resolveSibling("config.yml"),
+                        getDataFolder().toPath().resolveSibling("config_old.yml"));
+                if (reloadResources() && config != null) {
+                    config.set("config_version", CONFIG_VERSION);
+                    getLogger().info("A backup named \"config_old.yml\" has been created.");
+                    config.save(new File(getDataFolder(), "config.yml"));
+                }
+            }
+        }
     }
 
     private void registerCommand(String command, CommandExecutor executor) {
