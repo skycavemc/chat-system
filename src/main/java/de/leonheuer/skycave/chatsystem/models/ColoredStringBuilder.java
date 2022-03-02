@@ -4,20 +4,20 @@ import de.leonheuer.skycave.chatsystem.ChatSystem;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
-public class FormattableString {
+public class ColoredStringBuilder {
 
     private String result;
 
-    public FormattableString(@NotNull String base) {
+    public ColoredStringBuilder(@NotNull String base) {
         result = base;
     }
 
-    public FormattableString replace(@NotNull String from, @NotNull String to) {
+    public ColoredStringBuilder replace(@NotNull String from, @NotNull String to) {
         result = result.replaceFirst(from, to);
         return this;
     }
 
-    public FormattableString replaceAll(@NotNull String from, @NotNull String to) {
+    public ColoredStringBuilder replaceAll(@NotNull String from, @NotNull String to) {
         result = result.replaceAll(from, to);
         return this;
     }

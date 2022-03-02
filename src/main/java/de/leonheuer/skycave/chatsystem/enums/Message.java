@@ -1,6 +1,6 @@
 package de.leonheuer.skycave.chatsystem.enums;
 
-import de.leonheuer.skycave.chatsystem.models.FormattableString;
+import de.leonheuer.skycave.chatsystem.models.ColoredStringBuilder;
 
 public enum Message {
 
@@ -33,7 +33,7 @@ public enum Message {
         this.message = message;
     }
 
-    public FormattableString getMessage() {
-        return new FormattableString(message);
+    public ColoredStringBuilder getMessage() {
+        return new ColoredStringBuilder(message);
     }
 }
