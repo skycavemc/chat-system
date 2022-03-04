@@ -1,5 +1,6 @@
 package de.leonheuer.skycave.chatsystem.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RegexUtils {
+public class StringComparisonUtils {
 
     /**
      * Gets a list of all substrings from the source that match the provided regex.
@@ -40,6 +41,21 @@ public class RegexUtils {
             matches.removeIf(exclude::contains);
         }
         return matches.size() > 0;
+    }
+
+    /**
+     * Checks if any entry in the list contains the given string. Case-insensitive.
+     * @param list The list to check
+     * @param string The string to search for
+     * @return Whether the string is contained in the list.
+     */
+    public static boolean containsIgnoreCase(List<String> list, String string) {
+        for (String s : list) {
+            if (StringUtils.containsIgnoreCase(s, string)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

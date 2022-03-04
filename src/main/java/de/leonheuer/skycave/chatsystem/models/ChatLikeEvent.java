@@ -4,7 +4,7 @@ import de.leonheuer.skycave.chatsystem.ChatSystem;
 import de.leonheuer.skycave.chatsystem.enums.Message;
 import de.leonheuer.skycave.chatsystem.enums.Violation;
 import de.leonheuer.skycave.chatsystem.utils.NotificationUtils;
-import de.leonheuer.skycave.chatsystem.utils.RegexUtils;
+import de.leonheuer.skycave.chatsystem.utils.StringComparisonUtils;
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -73,8 +73,7 @@ public class ChatLikeEvent {
         // block similar messages
         if (config != null && !player.hasPermission("skycave.chat.bypass.similar") &&
                 main.lastMessage.containsKey(player) &&
-                !config.getStringList("whitelist_similarity").contains(words[0]) &&
-                !config.getStringList("whitelist_similarity").contains(words[0].toLowerCase(Locale.GERMAN))
+                StringComparisonUtils.containsIgnoreCase(config.getStringList("whitelist_similarity"), words[0])
         ) {
             NormalizedLevenshtein levenshtein = new NormalizedLevenshtein();
             double percentage = config.getInt("similarity_percentage") / 100.0;
@@ -159,7 +158,7 @@ public class ChatLikeEvent {
 
         // check for ip addresses
         if (!player.hasPermission("skycave.chat.bypass.ip")) {
-            if (RegexUtils.matches(message,
+            if (StringComparisonUtils.matches(message,
                     "(\\b25[0-5]|\\b2[0-4][0-9]|\\b[01]?[0-9][0-9]?)(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}",
                     "80.82.215.68")
             ) {
@@ -172,7 +171,7 @@ public class ChatLikeEvent {
         // check for domains
         if (!player.hasPermission("skycave.chat.bypass.domains")) {
             if (
-                    RegexUtils.matches(message,
+                    StringComparisonUtils.matches(message,
                             "(\\s+|^)[A-Za-z0-9-]{1,63}\\s*(\\.|,|dot|\\(dot\\)|punkt|\\(punkt\\)|-)\\s*(de|com|net|eu|bz|me|xyz)(\\s+|\\W|$)",
                             "skycave.de", "skybee.me", "youtu.be", "youtube.com", "imgur.com", "twitch.tv", "gamepedia.com")
             ) {
