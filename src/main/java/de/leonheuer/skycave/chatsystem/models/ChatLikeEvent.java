@@ -98,7 +98,8 @@ public class ChatLikeEvent {
             // check for disallowed unicode characters
             if (!bpChars) {
                 if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.BASIC_LATIN &&
-                        Character.UnicodeBlock.of(c) != Character.UnicodeBlock.LATIN_1_SUPPLEMENT
+                        Character.UnicodeBlock.of(c) != Character.UnicodeBlock.LATIN_1_SUPPLEMENT &&
+                        Character.UnicodeBlock.of(c) != Character.UnicodeBlock.CURRENCY_SYMBOLS
                 ) {
                     NotificationUtils.handleViolation(player, Violation.DISALLOWED_CHARS, message);
                     cancelled = true;
