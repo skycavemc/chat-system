@@ -4,6 +4,7 @@ import de.leonheuer.skycave.chatsystem.ChatSystem;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class MoveListener implements Listener {
 
@@ -14,8 +15,8 @@ public class MoveListener implements Listener {
     }
 
     @EventHandler
-    public void onMove(PlayerMoveEvent event) {
-        main.notMoved.remove(event.getPlayer());
+    public void onMove(@NotNull PlayerMoveEvent event) {
+        main.getNotMovedList().remove(event.getPlayer());
     }
 
 }
