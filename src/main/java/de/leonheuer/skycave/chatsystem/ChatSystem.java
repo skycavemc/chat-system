@@ -75,7 +75,7 @@ public final class ChatSystem extends JavaPlugin {
             config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
         }
         if (task != null) task.cancel();
-        task = getServer().getScheduler().runTaskTimerAsynchronously(this,
+        task = getServer().getScheduler().runTaskTimer(this,
                 lastMessageCountMap::clear, 0, 20L * config.getInt("timer_interval"));
         return succeeded;
     }
