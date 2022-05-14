@@ -21,7 +21,7 @@ public class CommandListener implements Listener {
         YamlConfiguration config = main.getConfiguration();
 
         if (config != null && !e.getPlayer().hasPermission("skycave.chat.bypass.commands")) {
-            // remove slash and slit the arguments
+            // remove slash and split the arguments
             String[] args = e.getMessage().substring(1).split("\\s");
             // check if command should be handled as chat
             if (config.getStringList("chat_commands").contains(args[0])) {

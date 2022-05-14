@@ -88,5 +88,8 @@ whitelist_similarity:
   - Willkommen
   - Viel Spaß
   - Servus
+# Interval in seconds to count messages
+timer_interval: 10
+max_messages: 4
 # DO NOT CHANGE THIS
 config_version: null

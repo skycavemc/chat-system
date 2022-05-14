@@ -4,7 +4,7 @@ import de.leonheuer.skycave.chatsystem.commands.ChatSystemCommand;
 import de.leonheuer.skycave.chatsystem.commands.ClearChatCommand;
 import de.leonheuer.skycave.chatsystem.listener.ChatListener;
 import de.leonheuer.skycave.chatsystem.listener.CommandListener;
-import de.leonheuer.skycave.chatsystem.listener.JoinListener;
+import de.leonheuer.skycave.chatsystem.listener.JoinLeaveListener;
 import de.leonheuer.skycave.chatsystem.listener.MoveListener;
 import de.leonheuer.skycave.chatsystem.models.FileLogger;
 import de.leonheuer.skycave.chatsystem.utils.FileUtils;
@@ -14,6 +14,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -27,12 +29,14 @@ import java.util.List;
 public final class ChatSystem extends JavaPlugin {
 
     public static final String PREFIX = "&e&l| &6Chat &8» ";
-    public static final String CONFIG_VERSION = "1.2";
-    public final List<Player> notMoved = new ArrayList<>();
-    public final List<Player> secondAfterLogin = new ArrayList<>();
-    public final HashMap<Player, String[]> lastMessage = new HashMap<>();
+    public static final String CONFIG_VERSION = "1.3";
+    private final List<Player> notMovedList = new ArrayList<>();
+    private final List<Player> loginCooldownList = new ArrayList<>();
+    private final HashMap<Player, String> lastMessageMap = new HashMap<>();
+    private final HashMap<Player, Integer> lastMessageCountMap = new HashMap<>();
     private FileLogger chatLogger;
     private YamlConfiguration config = null;
+    private BukkitTask task = null;
 
     @Override
     public void onEnable() {
@@ -42,16 +46,17 @@ public final class ChatSystem extends JavaPlugin {
             e.printStackTrace();
         }
 
+        chatLogger = new FileLogger(new File(getDataFolder(), "chat.log"));
+
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new ChatListener(this), this);
         pm.registerEvents(new CommandListener(this), this);
-        pm.registerEvents(new JoinListener(this), this);
+        pm.registerEvents(new JoinLeaveListener(this), this);
         pm.registerEvents(new MoveListener(this), this);
 
         registerCommand("chatsystem", new ChatSystemCommand(this));
         registerCommand("clearchat", new ClearChatCommand());
 
-        chatLogger = new FileLogger(new File(getDataFolder(), "chat.log"));
     }
 
     /**
@@ -69,6 +74,9 @@ public final class ChatSystem extends JavaPlugin {
         if (succeeded) {
             config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
         }
+        if (task != null) task.cancel();
+        task = getServer().getScheduler().runTaskTimerAsynchronously(this,
+                lastMessageCountMap::clear, 0, 20L * config.getInt("timer_interval"));
         return succeeded;
     }
 
@@ -110,6 +118,22 @@ public final class ChatSystem extends JavaPlugin {
 
     public FileLogger getChatLogger() {
         return chatLogger;
+    }
+
+    public List<Player> getNotMovedList() {
+        return notMovedList;
+    }
+
+    public List<Player> getLoginCooldownList() {
+        return loginCooldownList;
+    }
+
+    public HashMap<Player, String> getLastMessageMap() {
+        return lastMessageMap;
+    }
+
+    public HashMap<Player, Integer> getLastMessageCountMap() {
+        return lastMessageCountMap;
     }
 
 }

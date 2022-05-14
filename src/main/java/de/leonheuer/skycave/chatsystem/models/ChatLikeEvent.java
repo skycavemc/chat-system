@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Locale;
 
+@SuppressWarnings("unused")
 public class ChatLikeEvent {
     
     private final ChatSystem main;
@@ -57,31 +58,40 @@ public class ChatLikeEvent {
         YamlConfiguration config = main.getConfiguration();
 
         // block chat until cooldown has passed
-        if (main.secondAfterLogin.contains(player)) {
+        if (main.getLoginCooldownList().contains(player)) {
             player.sendMessage(Message.WAIT_SECOND.getMessage().get());
             cancelled = true;
             return;
         }
 
         // block chat until moved
-        if (main.notMoved.contains(player)) {
+        if (main.getNotMovedList().contains(player)) {
             player.sendMessage(Message.NO_CHAT_UNTIL_MOVED.getMessage().get());
             cancelled = true;
             return;
         }
 
+        // block too many messages
+        if (config != null && !player.hasPermission("skycave.chat.bypass.timer")) {
+            int count = main.getLastMessageCountMap().getOrDefault(player, 0);
+            count++;
+            main.getLastMessageCountMap().put(player, count);
+            if (count > config.getInt("max_messages")) {
+                NotificationUtils.handleViolation(player, Violation.TOO_MANY, message, false);
+                cancelled = true;
+                return;
+            }
+        }
+
         // block similar messages
         if (config != null && !player.hasPermission("skycave.chat.bypass.similar") &&
-                main.lastMessage.containsKey(player) &&
+                main.getLastMessageMap().containsKey(player) &&
                 !StringComparisonUtils.containsIgnoreCase(config.getStringList("whitelist_similarity"), words[0])
         ) {
             NormalizedLevenshtein levenshtein = new NormalizedLevenshtein();
             double percentage = config.getInt("similarity_percentage") / 100.0;
-            if (levenshtein.similarity(message, main.lastMessage.get(player)[0]) >= percentage ||
-                    main.lastMessage.get(player)[1] != null &&
-                            levenshtein.similarity(message, main.lastMessage.get(player)[1]) >= percentage
-            ) {
-                NotificationUtils.handleViolation(player, Violation.SIMILAR, message);
+            if (levenshtein.similarity(message, main.getLastMessageMap().get(player)) >= percentage) {
+                NotificationUtils.handleViolation(player, Violation.SIMILAR, message, false);
                 cancelled = true;
                 return;
             }
@@ -101,13 +111,13 @@ public class ChatLikeEvent {
                         Character.UnicodeBlock.of(c) != Character.UnicodeBlock.LATIN_1_SUPPLEMENT &&
                         Character.UnicodeBlock.of(c) != Character.UnicodeBlock.CURRENCY_SYMBOLS
                 ) {
-                    NotificationUtils.handleViolation(player, Violation.DISALLOWED_CHARS, message);
+                    NotificationUtils.handleViolation(player, Violation.DISALLOWED_CHARS, message, false);
                     cancelled = true;
                     return;
                 }
             }
 
-            // check for spam
+            // check for character spam
             if (!bpSpam) {
                 // same character
                 if (String.valueOf(c).equalsIgnoreCase(String.valueOf(cache))) {
@@ -116,8 +126,8 @@ public class ChatLikeEvent {
                     } else {
                         count++;
                     }
-                    if (count > 3) {
-                        NotificationUtils.handleViolation(player, Violation.SPAM, message);
+                    if (count > 4) {
+                        NotificationUtils.handleViolation(player, Violation.SPAM, message, false);
                         cancelled = true;
                         return;
                     }
@@ -133,11 +143,12 @@ public class ChatLikeEvent {
                     lastWord++;
                     if (lastWord > 40) {
                         // urls might be very long
+                        // noinspection HttpUrlsUsage
                         if (!message.contains("www.") &&
                                 !message.contains("https://") &&
                                 !message.contains("http://")
                         ) {
-                            NotificationUtils.handleViolation(player, Violation.SPAM, message);
+                            NotificationUtils.handleViolation(player, Violation.SPAM, message, false);
                             cancelled = true;
                             return;
                         }
@@ -150,7 +161,7 @@ public class ChatLikeEvent {
         if (config != null && !player.hasPermission("skycave.chat.bypass.swear")) {
             for (String word : config.getStringList("block_words")) {
                 if (StringUtils.containsIgnoreCase(message, word)) {
-                    NotificationUtils.handleViolation(player, Violation.SWEAR_WORDS, message);
+                    NotificationUtils.handleViolation(player, Violation.SWEAR_WORDS, message, true);
                     cancelled = true;
                     return;
                 }
@@ -163,7 +174,7 @@ public class ChatLikeEvent {
                     "(\\b25[0-5]|\\b2[0-4][0-9]|\\b[01]?[0-9][0-9]?)(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}",
                     "80.82.215.68")
             ) {
-                NotificationUtils.handleViolation(player, Violation.IP_ADDRESS, message);
+                NotificationUtils.handleViolation(player, Violation.IP_ADDRESS, message, true);
                 cancelled = true;
                 return;
             }
@@ -176,7 +187,7 @@ public class ChatLikeEvent {
                             "(\\s+|^)[A-Za-z0-9-]{1,63}\\s*(\\.|,|dot|\\(dot\\)|punkt|\\(punkt\\)|-)\\s*(de|com|net|eu|bz|me|xyz)(\\s+|\\W|$)",
                             "skycave.de", "skybee.me", "youtu.be", "youtube.com", "imgur.com", "twitch.tv", "gamepedia.com")
             ) {
-                NotificationUtils.handleViolation(player, Violation.DOMAIN, message);
+                NotificationUtils.handleViolation(player, Violation.DOMAIN, message, true);
                 cancelled = true;
                 return;
             }
@@ -203,7 +214,7 @@ public class ChatLikeEvent {
 
         // grammar
         if (!player.hasPermission("skycave.chat.bypass.grammar")) {
-            message = StringUtils.capitalize(message);
+            if (message.length() >= 3) message = StringUtils.capitalize(message);
 
             // 2nd letter lowercase if third is not uppercase
             if (message.length() >= 3 &&
@@ -229,14 +240,7 @@ public class ChatLikeEvent {
         }
 
         if (!cancelled) {
-            String[] lastMessages = main.lastMessage.get(player);
-            if (lastMessages == null) {
-                lastMessages = new String[]{message, null};
-            } else {
-                lastMessages[1] = lastMessages[0];
-                lastMessages[0] = message;
-            }
-            main.lastMessage.put(player, lastMessages);
+            main.getLastMessageMap().put(player, message);
         }
     }
 }

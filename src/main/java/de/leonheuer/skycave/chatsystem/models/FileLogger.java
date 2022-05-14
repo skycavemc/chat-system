@@ -73,7 +73,7 @@ public class FileLogger {
     }
 
     /**
-     * Logs the given output string to the log file and executes all custom actions.
+     * Logs the given output string to the log file.
      * @param output The output string to log
      */
     public void log(@NotNull String output) {
@@ -90,20 +90,11 @@ public class FileLogger {
     }
 
     /**
-     * Logs the given output string to the log file and executes all custom actions.
+     * Logs the given output string to the log file.
      * Inserts a new line at the end of the log file.
      * @param output The output string to log
      */
     public void logln(@NotNull String output) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
-        output = format.replaceFirst("%output", output);
-        output = output.replaceFirst("%timestamp", formatter.format(LocalDateTime.now()));
-        try {
-            FileWriter writer = new FileWriter(logFile, true);
-            writer.write(output + System.getProperty("line.separator"));
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        log(output + System.getProperty("line.separator"));
     }
 }

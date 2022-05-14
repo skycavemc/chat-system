@@ -18,9 +18,10 @@ public class NotificationUtils {
      * @param violation The violation the player has committed
      * @param original The original chat message
      */
-    public static void handleViolation(@NotNull Player player, @NotNull Violation violation, @NotNull String original) {
+    public static void handleViolation(@NotNull Player player, @NotNull Violation violation, @NotNull String original,
+                                       boolean notifyStaff) {
         player.sendMessage(violation.getMessage().getMessage().get());
-        notifyStaff(player, violation.getName(), original);
+        if (notifyStaff) notifyStaff(player, violation.getName(), original);
     }
 
     /**

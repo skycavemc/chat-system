@@ -13,6 +13,7 @@ public enum Message {
     NO_CHAT_UNTIL_MOVED("&7Du kannst erst chatten sobald du dich bewegst."),
     WAIT_SECOND("&cBitte warte eine Sekunde, bevor du eine Nachricht sendest."),
     SIMILAR("&cDeine Nachricht ähnelt deiner vorherigen."),
+    TOO_MANY("&cDu sendest zu viele Nachrichten innerhalb kurzer Zeit."),
 
     // chatsystem command
     CHAT_SYSTEM_HELP_HEADER("&8~~~~ &2Befehlshilfe für das ChatSystem &8~~~~"),

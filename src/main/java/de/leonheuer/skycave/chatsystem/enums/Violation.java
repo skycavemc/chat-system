@@ -8,6 +8,7 @@ public enum Violation {
     IP_ADDRESS(Message.IP_ADDRESS, "IP-Adresse"),
     DOMAIN(Message.DOMAIN, "Domain"),
     SIMILAR(Message.SIMILAR, "Ähnliche Nachricht"),
+    TOO_MANY(Message.TOO_MANY, "Zu viele Nachrichten"),
     ;
 
     private final Message message;
