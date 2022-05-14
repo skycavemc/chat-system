@@ -14,13 +14,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,8 +91,9 @@ public final class ChatSystem extends JavaPlugin {
             }
 
             if (!ver.equals(CONFIG_VERSION)) {
-                Files.move(Paths.get(getDataFolder().getPath(), "config.yml"),
-                        Paths.get(getDataFolder().getPath(), "config_old.yml"));
+                Path old = Paths.get(getDataFolder().getPath(), "config_old.yml");
+                if (Files.exists(old)) Files.delete(old);
+                Files.move(Paths.get(getDataFolder().getPath(), "config.yml"), old);
                 if (reloadResources() && config != null) {
                     config.set("config_version", CONFIG_VERSION);
                     getLogger().info("A backup named \"config_old.yml\" has been created.");

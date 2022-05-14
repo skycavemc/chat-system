@@ -57,3 +57,7 @@ processResources {
 shadowJar {
     archiveFileName.set("${project.name}-${project.version}.jar")
 }
+
+build {
+    dependsOn(shadowJar)
+}
